@@ -1,25 +1,18 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-set -e
+set -eo pipefail
 
-printf "Environment variables:\\n"
-printf "SOURCE_BRANCH=\"${SOURCE_BRANCH}\"\\n"
-printf "SOURCE_COMMIT=\"${SOURCE_COMMIT}\"\\n"
-printf "COMMIT_MSG=\"${COMMIT_MSG}\"\\n"
-printf "DOCKER_REPO=\"${DOCKER_REPO}\"\\n"
-printf "DOCKERFILE_PATH=\"${DOCKERFILE_PATH}\"\\n"
-printf "CACHE_TAG=\"${CACHE_TAG}\"\\n"
-printf "IMAGE_NAME=\"${IMAGE_NAME}\"\\n"
+. "$(cd $(dirname "$0"); pwd)/env"
 
-# INTERNAL_TAG is only used for extracting the BASE_IMAGE and the VERSION, adding our own tags happens in post_push
-INTERNAL_TAG="${SOURCE_BRANCH}"
-if test "${SOURCE_BRANCH}" = "master"; then
+# LONG_TAG is only used for extracting the BASE_IMAGE and the VERSION, adding our own tags happens in post_push
+LONG_TAG="${SOURCE_BRANCH}"
+if echo "${SOURCE_BRANCH}" | grep -q -v "\-on\-"; then
     DOCKERFILE_BASE_IMAGE="$(sed -n "s/ARG BASE_IMAGE=\"\(.*\)\"/\1/p" Dockerfile | sed -e '1 s/:/-/; t')"
     DOCKERFILE_VERSION="$(sed -n "s/ARG VERSION=\"\(.*\)\"/\1/p" Dockerfile)"
-    INTERNAL_TAG="${DOCKERFILE_VERSION}-on-${DOCKERFILE_BASE_IMAGE}"
+    LONG_TAG="${DOCKERFILE_VERSION}-on-${DOCKERFILE_BASE_IMAGE}"
 fi
-BASE_IMAGE="$(printf "${INTERNAL_TAG}" | awk -F "-on-" '{print $2}' | sed -e '1 s/\-/:/; t')"
-VERSION="$(printf "${INTERNAL_TAG}" | awk -F "-on-" '{print $1}')"
+BASE_IMAGE="$(printf "${LONG_TAG}" | awk -F "-on-" '{print $2}' | sed -e '1 s/\-/:/; t')"
+VERSION="$(printf "${LONG_TAG}" | awk -F "-on-" '{print $1}')"
 BUILD_DATE="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
 VCS_REF="$(git rev-parse HEAD)"
 

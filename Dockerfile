@@ -1,22 +1,16 @@
 # Set defaults
 
-ARG COMPOSER_IMAGE="composer:1.6.4"
 ARG BASE_IMAGE="php:7.2-alpine"
 ARG PACKAGIST_NAME="squizlabs/php_codesniffer"
 ARG PHPQA_NAME="phpcs"
 ARG VERSION="3.2.3"
 
-# Download with Composer - https://getcomposer.org/
-
-FROM ${COMPOSER_IMAGE} as composer
-ARG PACKAGIST_NAME
-ARG VERSION
-RUN COMPOSER_HOME="/composer" \
-    composer global require --prefer-dist --no-progress --dev ${PACKAGIST_NAME}:${VERSION}
-
 # Build image
 
 FROM ${BASE_IMAGE}
+ARG COMPOSER_IMAGE
+ARG PACKAGIST_NAME
+ARG VERSION
 ARG PHPQA_NAME
 ARG VERSION
 ARG BUILD_DATE
@@ -29,8 +23,9 @@ RUN apk add --no-cache tini
 
 # Install PHP CodeSniffer - https://github.com/squizlabs/PHP_CodeSniffer
 
-COPY --from=composer "/composer/vendor" "/vendor/"
-ENV PATH /vendor/bin:${PATH}
+COPY --from=composer:1.6.5 /usr/bin/composer /usr/bin/composer
+RUN COMPOSER_HOME="/composer" composer global require --prefer-dist --no-progress --dev ${PACKAGIST_NAME}:${VERSION}
+ENV PATH /composer/vendor/bin:${PATH}
 
 # Add entrypoint script
 

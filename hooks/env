@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+set -eo pipefail
+
+printf "Environment variables:\\n"
+printf "SOURCE_BRANCH=\"${SOURCE_BRANCH}\"\\n"
+printf "SOURCE_COMMIT=\"${SOURCE_COMMIT}\"\\n"
+printf "COMMIT_MSG=\"${COMMIT_MSG}\"\\n"
+printf "DOCKER_REPO=\"${DOCKER_REPO}\"\\n"
+printf "DOCKERFILE_PATH=\"${DOCKERFILE_PATH}\"\\n"
+printf "CACHE_TAG=\"${CACHE_TAG}\"\\n"
+printf "IMAGE_NAME=\"${IMAGE_NAME}\"\\n"
