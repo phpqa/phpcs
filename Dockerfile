@@ -3,7 +3,7 @@
 ARG BASE_IMAGE="php:7.2-alpine"
 ARG PACKAGIST_NAME="squizlabs/php_codesniffer"
 ARG PHPQA_NAME="phpcs"
-ARG VERSION="3.2.3"
+ARG VERSION="3.3.0"
 
 # Build image
 
