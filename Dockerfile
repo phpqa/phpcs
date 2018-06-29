@@ -21,7 +21,7 @@ ARG IMAGE_NAME
 
 RUN apk add --no-cache tini
 
-# Install PHP CodeSniffer - https://github.com/squizlabs/PHP_CodeSniffer
+# Install PHP_CodeSniffer - https://github.com/squizlabs/PHP_CodeSniffer
 
 COPY --from=composer:1.6.5 /usr/bin/composer /usr/bin/composer
 RUN COMPOSER_HOME="/composer" composer global require --prefer-dist --no-progress --dev ${PACKAGIST_NAME}:${VERSION}
